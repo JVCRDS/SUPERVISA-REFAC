@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16
+    container_name: visa-db
+    environment:
+      POSTGRES_DB: visacampo
+      POSTGRES_USER: visa
+      POSTGRES_PASSWORD: visa
+    ports:
+      # 5432 do host costuma estar ocupado por um Postgres local; a porta
+      # interna do container continua 5432, só o mapeamento externo muda.
+      - "5433:5432"
+    volumes:
+      - visa-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U visa -d visacampo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+    container_name: visa-api
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: visacampo
+      DB_USER: visa
+      DB_PASSWORD: visa
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  visa-db-data:
