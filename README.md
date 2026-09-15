@@ -200,5 +200,4 @@ Em desenvolvimento.
 
 ## Autores
 
-Cauan Eduardo Cunha
-João Vitor Candido Ribeiro dos Santos
+Cauan Eduardo Cunha || João Vitor Candido Ribeiro dos Santos
