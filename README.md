@@ -35,22 +35,22 @@ sistema oficial.
 A estrutura segue três níveis:
 
 ```
-Ocorrência  →  Inspeção  →  Registro e evidência
- (o caso)      (cada ida)    (o que foi visto e fotografado)
+Ocorrência  →  Inspeção  →  Evidência
+ (o caso)      (cada ida)    (o que foi fotografado)
 ```
 
-Uma ocorrência nasce de uma demanda (licença, renovação, denúncia, requisição
-de órgão externo ou rotina) e pode conter mais de uma ida ao local: inspeção
-inicial e retornos após prazo de adequação.
+Uma ocorrência vincula um estabelecimento a uma área de atuação e pode conter
+mais de uma ida ao local: inspeção inicial e retornos após prazo de
+adequação. Cada inspeção é conduzida por um ou mais fiscais, sendo um deles
+o signatário do auto de infração, quando aplicável.
 
 ### Funcionalidades
 
-- Recebimento e cadastro de ocorrências, com registro da origem e do protocolo
-  externo
-- Distribuição por área de atuação e atribuição ao fiscal, com histórico de
-  quem atribuiu e quando
-- Registro da inspeção com roteiro por segmento, exibindo a base legal de cada
-  item avaliado
+- Cadastro de ocorrências, vinculando área de atuação e estabelecimento
+- Registro dos fiscais presentes em cada inspeção, com marcação de quem
+  assina o auto de infração
+- Registro da inspeção, com observações gerais e situação (em andamento ou
+  concluída)
 - Captura de fotografias com data, hora, coordenadas, autor e resumo
   criptográfico (SHA-256)
 - Dossiê consolidado da ocorrência, reunindo todas as inspeções e evidências
@@ -63,6 +63,10 @@ inicial e retornos após prazo de adequação.
 - Assinatura do autuado e de testemunhas
 - Integração automatizada com o Solar BPM e com a Ouvidoria
 - Etapas posteriores do processo administrativo sanitário
+- Cadastro formal do responsável legal do estabelecimento e roteiro de
+  inspeção detalhado por item/base legal — reduzidos do modelo inicial para
+  manter o protótipo focado no fluxo essencial (quem inspecionou, onde e
+  quais evidências foram coletadas)
 
 ---
 
@@ -156,30 +160,34 @@ docker compose up db
 
 ## Modelo de dados
 
-Onze tabelas, criadas pela migration `V1__esquema_inicial.sql`:
+Oito tabelas, criadas pela migration `V1__esquema_inicial.sql`:
 
 | Tabela | Papel |
 | --- | --- |
 | `area` | áreas de atuação (alimentos, água, saúde) |
-| `agente` | usuários e seus perfis (administrativo, chefe, fiscal) |
-| `responsavel` | responsável legal pelo estabelecimento |
+| `agente` | usuários e seus perfis (administrativo, chefe, fiscal) — `Area 1:N Agente` |
 | `estabelecimento` | local inspecionado |
-| `ocorrencia` | o caso, da demanda ao encerramento |
-| `atribuicao` | histórico de distribuição das ocorrências |
-| `roteiro` / `item_roteiro` | checklist por segmento, com base legal |
-| `inspecao` | cada ida ao local |
-| `registro` | situação constatada em cada item |
-| `evidencia` | metadados e hash das fotografias |
+| `ocorrencia` | o caso — agrega as inspeções de um mesmo estabelecimento numa área |
+| `inspecao` | cada ida ao local, vinculada a uma ocorrência |
+| `inspecao_fiscal` | fiscais presentes em cada inspeção, com o signatário do auto marcado |
+| `evidencia` | metadados e hash das fotografias, vinculadas à inspeção e ao autor |
 | `log_auditoria` | rastro de alterações |
+
+O modelo inicial contemplava também `responsavel` (responsável legal),
+`atribuicao` (histórico formal de distribuição) e `roteiro`/`item_roteiro`/
+`registro` (checklist por segmento com base legal por item). Essas entidades
+foram removidas nesta iteração para manter o protótipo focado no fluxo
+essencial — ver "O que está fora do escopo".
 
 ---
 
 ## Proteção de dados
 
-O sistema trata dados pessoais — nome e CPF de responsável legal, endereços e
-imagens de estabelecimentos — no contexto de execução de política pública, nos
-termos da Lei nº 13.709/2018. Documentos oficiais usados durante o levantamento
-de requisitos foram anonimizados antes da análise.
+O sistema trata dados pessoais — nome e e-mail de agentes, endereços de
+estabelecimentos e imagens capturadas em campo — no contexto de execução de
+política pública, nos termos da Lei nº 13.709/2018. Documentos oficiais
+usados durante o levantamento de requisitos foram anonimizados antes da
+análise.
 
 ---
 
@@ -190,9 +198,11 @@ Em desenvolvimento.
 - [x] Levantamento do fluxo de trabalho e requisitos
 - [x] Modelagem de dados e esquema inicial
 - [x] Ambiente containerizado com API e banco
+- [x] Fatia vertical de referência (`area`: entidade, repositório e
+      controller CRUD)
 - [ ] Autenticação e perfis de acesso
 - [ ] Cadastro de estabelecimentos e ocorrências
-- [ ] Distribuição e atribuição
+- [ ] Registro de fiscais presentes na inspeção
 - [ ] Aplicativo Flutter
 - [ ] Exportação do pacote de evidências
 
