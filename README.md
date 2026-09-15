@@ -200,5 +200,5 @@ Em desenvolvimento.
 
 ## Autores
 
-Cauan Eduardo Cunha — cauan.cunha@fatec.sp.gov.br
-João Vitor Candido Ribeiro dos Santos — joao.santos453@fatec.sp.gov.br
+Cauan Eduardo Cunha
+João Vitor Candido Ribeiro dos Santos
