@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ public class Area {
     @Id
     private UUID id;
 
+    @NotBlank(message = "nome é obrigatório")
     @Column(nullable = false, unique = true, length = 120)
     private String nome;
 
@@ -26,20 +28,12 @@ public class Area {
     @Column(name = "criado_em", nullable = false)
     private OffsetDateTime criadoEm;
 
-    protected Area() {
-        // exigido pelo JPA
-    }
-
-    public Area(UUID id, String nome, String descricao) {
-        this.id = id;
-        this.nome = nome;
-        this.descricao = descricao;
-        this.ativo = true;
-        this.criadoEm = OffsetDateTime.now();
-    }
-
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -68,5 +62,9 @@ public class Area {
 
     public OffsetDateTime getCriadoEm() {
         return criadoEm;
+    }
+
+    public void setCriadoEm(OffsetDateTime criadoEm) {
+        this.criadoEm = criadoEm;
     }
 }
