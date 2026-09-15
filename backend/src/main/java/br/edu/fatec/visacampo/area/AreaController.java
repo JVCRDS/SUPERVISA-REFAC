@@ -1,7 +1,6 @@
 package br.edu.fatec.visacampo.area;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -29,62 +28,43 @@ public class AreaController {
     }
 
     @GetMapping
-    public List<AreaResponse> listar() {
-        return areaRepository.findAll().stream().map(AreaResponse::from).toList();
+    public List<Area> listar() {
+        return areaRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public AreaResponse buscar(@PathVariable UUID id) {
-        return AreaResponse.from(buscarOuFalhar(id));
+    public Area buscar(@PathVariable UUID id) {
+        return buscarOuFalhar(id);
     }
 
     @PostMapping
-    public ResponseEntity<AreaResponse> criar(@Valid @RequestBody AreaRequest request) {
-        Area area = new Area(UUID.randomUUID(), request.nome(), request.descricao());
+    public ResponseEntity<Area> criar(@Valid @RequestBody Area area) {
+        if (area.getId() == null) {
+            area.setId(UUID.randomUUID());
+        }
+        if (area.getCriadoEm() == null) {
+            area.setCriadoEm(OffsetDateTime.now());
+        }
         Area salva = areaRepository.save(area);
-        return ResponseEntity.created(URI.create("/api/areas/" + salva.getId()))
-                .body(AreaResponse.from(salva));
+        return ResponseEntity.created(URI.create("/api/areas/" + salva.getId())).body(salva);
     }
 
     @PutMapping("/{id}")
-    public AreaResponse atualizar(@PathVariable UUID id, @Valid @RequestBody AreaRequest request) {
-        Area area = buscarOuFalhar(id);
-        area.setNome(request.nome());
-        area.setDescricao(request.descricao());
-        return AreaResponse.from(areaRepository.save(area));
+    public Area atualizar(@PathVariable UUID id, @Valid @RequestBody Area area) {
+        Area existente = buscarOuFalhar(id);
+        existente.setNome(area.getNome());
+        existente.setDescricao(area.getDescricao());
+        return areaRepository.save(existente);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable UUID id) {
-        Area area = buscarOuFalhar(id);
-        areaRepository.delete(area);
+        areaRepository.delete(buscarOuFalhar(id));
         return ResponseEntity.noContent().build();
     }
 
     private Area buscarOuFalhar(UUID id) {
         return areaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Área não encontrada"));
-    }
-
-    public record AreaRequest(
-            @NotBlank(message = "nome é obrigatório") String nome,
-            String descricao) {
-    }
-
-    public record AreaResponse(
-            UUID id,
-            String nome,
-            String descricao,
-            boolean ativo,
-            OffsetDateTime criadoEm) {
-
-        static AreaResponse from(Area area) {
-            return new AreaResponse(
-                    area.getId(),
-                    area.getNome(),
-                    area.getDescricao(),
-                    area.isAtivo(),
-                    area.getCriadoEm());
-        }
     }
 }
