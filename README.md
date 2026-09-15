@@ -146,6 +146,13 @@ curl http://localhost:8080/actuator/health
 docker exec -it visa-db psql -U visa -d visacampo -c "\dt"
 ```
 
+Documentação interativa da API (Swagger UI), pra testar os endpoints sem
+Postman:
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
 Durante o desenvolvimento, suba apenas o banco e execute a aplicação pela IDE:
 
 ```bash
