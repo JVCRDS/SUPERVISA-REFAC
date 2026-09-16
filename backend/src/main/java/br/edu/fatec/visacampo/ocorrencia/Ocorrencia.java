@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -29,15 +30,16 @@ public class Ocorrencia {
     @Column(name = "atualizado_em", nullable = false)
     private OffsetDateTime atualizadoEm;
     
+    @NotBlank(message = "descrição é obrigatória")
     @Column(name = "descricao", nullable = false)
-    private String desc;
+    private String descricao;
 
-    public String getDesc() {
-        return desc;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public OffsetDateTime getAtualizadoEm() {

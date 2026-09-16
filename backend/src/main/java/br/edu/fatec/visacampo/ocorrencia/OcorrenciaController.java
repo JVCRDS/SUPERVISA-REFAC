@@ -55,6 +55,7 @@ public class OcorrenciaController {
         Ocorrencia existente = buscarOuFalhar(id);
         existente.setAreaId(ocorrencia.getAreaId());
         existente.setEstabelecimentoId(ocorrencia.getEstabelecimentoId());
+        existente.setDescricao(ocorrencia.getDescricao());
         existente.setAtualizadoEm(OffsetDateTime.now());
         return ocorrenciaRepository.save(existente);
     }
