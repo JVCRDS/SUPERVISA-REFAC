@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.sql.Timestamp;
-
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -29,13 +27,13 @@ public class Ocorrencia {
     private OffsetDateTime criadoEm;
     
     @Column(name = "atualizado_em", nullable = false)
-    private Timestamp atualizadoEm;
+    private OffsetDateTime atualizadoEm;
 
-    public Timestamp getAtualizadoEm() {
+    public OffsetDateTime getAtualizadoEm() {
         return atualizadoEm;
     }
 
-    public void setAtualizadoEm(Timestamp atualizadoEm) {
+    public void setAtualizadoEm(OffsetDateTime atualizadoEm) {
         this.atualizadoEm = atualizadoEm;
     }
 
