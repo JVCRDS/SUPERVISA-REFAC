@@ -28,6 +28,17 @@ public class Ocorrencia {
     
     @Column(name = "atualizado_em", nullable = false)
     private OffsetDateTime atualizadoEm;
+    
+    @Column(name = "descricao", nullable = false)
+    private String desc;
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
     public OffsetDateTime getAtualizadoEm() {
         return atualizadoEm;
