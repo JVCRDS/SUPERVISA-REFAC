@@ -124,6 +124,12 @@ visa-campo/
 │           ├── application.yml
 │           └── db/migration/
 └── app/                      # aplicativo Flutter (em desenvolvimento)
+    ├── lib/
+    │   ├── config/           # URL base da API
+    │   ├── models/           # espelham o JSON da API
+    │   ├── services/         # ApiClient
+    │   └── screens/
+    └── test/
 ```
 
 ---
@@ -162,6 +168,8 @@ docker compose up db
 > No emulador Android, `localhost` aponta para o próprio emulador. Use
 > `10.0.2.2` para alcançar a API na máquina hospedeira, ou o IP da rede local
 > em aparelho físico.
+
+Com a API no ar, para rodar o app: ver `app/README.md`.
 
 ---
 
@@ -207,10 +215,14 @@ Em desenvolvimento.
 - [x] Ambiente containerizado com API e banco
 - [x] Fatia vertical de referência (`area`: entidade, repositório e
       controller CRUD)
+- [x] CRUD das 8 entidades (agente, estabelecimento, ocorrência, inspeção,
+      fiscal presente na inspeção, evidência — imutável — e log de
+      auditoria, só leitura)
+- [x] Documentação interativa da API (Swagger UI)
 - [ ] Autenticação e perfis de acesso
-- [ ] Cadastro de estabelecimentos e ocorrências
-- [ ] Registro de fiscais presentes na inspeção
-- [ ] Aplicativo Flutter
+- [x] Registro de fiscais presentes na inspeção
+- [ ] Aplicativo Flutter — em andamento: tela de listagem de ocorrências
+      consumindo a API (`app/`)
 - [ ] Exportação do pacote de evidências
 
 ---
