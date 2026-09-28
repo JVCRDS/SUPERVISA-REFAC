@@ -69,6 +69,16 @@ porque o navegador roda direto na sua máquina, junto com a API.
 O `../start-dev.sh` já escolhe automaticamente entre Android/iOS e
 Chrome, dependendo do que estiver disponível.
 
+## Device preview
+
+Em modo debug (`!kReleaseMode`), o app abre dentro do
+[`device_preview`](https://pub.dev/packages/device_preview): uma moldura de
+celular com seletor de aparelho, orientação e zoom, tudo dentro da própria
+janela do app. É útil principalmente rodando no navegador
+(`flutter run -d chrome`), pra simular telas de celular sem precisar de um
+emulador Android instalado. Em build de release (`flutter build ... --release`)
+ele é automaticamente desligado e o app roda normal, sem a moldura.
+
 ## Testes
 
 ```bash
