@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/ocorrencias_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const VisaCampoApp());
@@ -13,7 +14,7 @@ class VisaCampoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'visa-campo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal), useMaterial3: true),
+      theme: AppTheme.light(),
       home: const OcorrenciasScreen(),
     );
   }

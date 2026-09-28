@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/ocorrencia.dart';
 import '../services/api_client.dart';
+import 'ocorrencia_detalhe_screen.dart';
 
 class OcorrenciasScreen extends StatefulWidget {
   const OcorrenciasScreen({super.key});
@@ -100,15 +101,29 @@ class _OcorrenciasScreenState extends State<OcorrenciasScreen> {
               );
             }
 
-            return ListView.separated(
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               itemCount: ocorrencias.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final item = ocorrencias[index];
-                return ListTile(
-                  title: Text(item.nomeEstabelecimento),
-                  subtitle: Text('${item.nomeArea} · ${item.ocorrencia.descricao}'),
-                  trailing: Text(_formatarData(item.ocorrencia.criadoEm)),
+                return Card(
+                  child: ListTile(
+                    title: Text(item.nomeEstabelecimento),
+                    subtitle: Text('${item.nomeArea} · ${item.ocorrencia.descricao}'),
+                    trailing: Text(_formatarData(item.ocorrencia.criadoEm)),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => OcorrenciaDetalheScreen(
+                            ocorrencia: item.ocorrencia,
+                            nomeArea: item.nomeArea,
+                            nomeEstabelecimento: item.nomeEstabelecimento,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             );

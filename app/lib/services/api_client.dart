@@ -3,8 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../config/api_config.dart';
+import '../models/agente.dart';
 import '../models/area.dart';
 import '../models/estabelecimento.dart';
+import '../models/evidencia.dart';
+import '../models/inspecao.dart';
+import '../models/inspecao_fiscal.dart';
 import '../models/ocorrencia.dart';
 
 class ApiException implements Exception {
@@ -36,6 +40,33 @@ class ApiClient {
     final resposta = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/estabelecimentos/$id'));
     _verificarResposta(resposta);
     return Estabelecimento.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
+  }
+
+  Future<List<Inspecao>> listarInspecoes() async {
+    final resposta = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/inspecoes'));
+    _verificarResposta(resposta);
+    final lista = jsonDecode(resposta.body) as List<dynamic>;
+    return lista.map((item) => Inspecao.fromJson(item as Map<String, dynamic>)).toList();
+  }
+
+  Future<List<InspecaoFiscal>> listarInspecaoFiscais() async {
+    final resposta = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/inspecoes-fiscais'));
+    _verificarResposta(resposta);
+    final lista = jsonDecode(resposta.body) as List<dynamic>;
+    return lista.map((item) => InspecaoFiscal.fromJson(item as Map<String, dynamic>)).toList();
+  }
+
+  Future<List<Evidencia>> listarEvidencias() async {
+    final resposta = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/evidencias'));
+    _verificarResposta(resposta);
+    final lista = jsonDecode(resposta.body) as List<dynamic>;
+    return lista.map((item) => Evidencia.fromJson(item as Map<String, dynamic>)).toList();
+  }
+
+  Future<Agente> buscarAgente(String id) async {
+    final resposta = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/agentes/$id'));
+    _verificarResposta(resposta);
+    return Agente.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
   }
 
   void _verificarResposta(http.Response resposta) {
