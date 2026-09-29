@@ -36,6 +36,17 @@ andamento das ocorrências da sua área:
 A paleta de cores usada em todo o app está em `theme/app_colors.dart` e o
 `ThemeData` correspondente em `theme/app_theme.dart`.
 
+## Pré-requisitos
+
+Diferente do backend (`../backend/`), este app **não roda em container** —
+o `docker-compose.yml` da raiz sobe só o banco (`db`) e a API (`api`).
+Pra rodar o app numa máquina nova, é preciso instalar o
+[Flutter SDK](https://docs.flutter.dev/get-started/install) diretamente
+nela, independente de estar usando Android, iOS ou Web. Isso vale mesmo
+com o `device_preview` (ver seção abaixo) — ele é só mais um pacote Dart
+do projeto, baixado via `flutter pub get` e compilado junto com o resto do
+app; não substitui o SDK nem roda separado dele.
+
 ## Como rodar
 
 Suba a API primeiro (`../start-dev.sh` ou `docker compose up --build` na
