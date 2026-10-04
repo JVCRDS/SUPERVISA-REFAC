@@ -159,6 +159,26 @@ Postman:
 http://localhost:8080/swagger-ui/index.html
 ```
 
+### Criando uma ocorrência de teste pelo Swagger
+
+Ocorrência exige um `areaId` e um `estabelecimentoId` que já existam —
+`área` é um cadastro de referência (só `GET`, sem endpoint de criação), e
+a migration `V3__seed_areas.sql` já semeia três áreas padrão num banco
+novo, pra não travar nesse ponto:
+
+| Área | id |
+| --- | --- |
+| Alimentos | `11111111-1111-1111-1111-111111111111` |
+| Água | `22222222-2222-2222-2222-222222222222` |
+| Saúde | `33333333-3333-3333-3333-333333333333` |
+
+Passo a passo no Swagger:
+
+1. `POST /api/estabelecimentos` — cria um estabelecimento (só `nome` é
+   obrigatório além do `id`, que você mesmo gera como UUID).
+2. `POST /api/ocorrencias` — usa o `id` do estabelecimento criado e um
+   dos `id` de área da tabela acima, mais uma `descricao`.
+
 Durante o desenvolvimento, suba apenas o banco e execute a aplicação pela IDE:
 
 ```bash
