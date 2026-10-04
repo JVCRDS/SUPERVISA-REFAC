@@ -171,6 +171,34 @@ docker compose up db
 
 Com a API no ar, para rodar o app: ver `app/README.md`.
 
+### Problemas comuns no Windows
+
+Docker no Windows roda containers Linux dentro de uma VM leve via WSL2 —
+não existe isolamento nativo (namespaces/cgroups) fora do kernel Linux. Se
+o Docker Desktop não abrir, ou travar com erro de conexão ao `_ping`/API:
+
+1. **"Virtualization support not detected"** — a virtualização de hardware
+   (Intel VT-x / AMD-V) está desligada. Confira no Gerenciador de Tarefas
+   → Desempenho → CPU → campo "Virtualização". Se estiver desabilitada,
+   precisa ligar na BIOS/UEFI (opção costuma ficar em "Advanced" →
+   "CPU Configuration"). Em notebook corporativo, pode estar bloqueada por
+   TI.
+2. Com a virtualização habilitada mas o Docker Desktop ainda falhando,
+   habilite os recursos do Windows (PowerShell como administrador) e
+   reinicie:
+   ```powershell
+   dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+   dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+   ```
+   Depois, ainda como administrador:
+   ```powershell
+   wsl --update
+   wsl --set-default-version 2
+   ```
+3. Erro de pipe não encontrado (`dockerDesktopLinuxEngine`) geralmente é só
+   o app do Docker Desktop fechado — abra pelo menu Iniciar e espere
+   carregar antes de rodar `docker compose`.
+
 ---
 
 ## Modelo de dados
