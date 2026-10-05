@@ -20,21 +20,26 @@ class HomeScreen extends StatelessWidget {
               const Spacer(),
               Image.asset(
                 'assets/icons/logo.png',
-                height: 120,
+                height: 200,
                 errorBuilder: (context, error, stackTrace) => Container(
-                  height: 120,
-                  width: 120,
+                  height: 200,
+                  width: 200,
                   decoration: const BoxDecoration(
                     color: AppColors.azul,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.health_and_safety, color: AppColors.branco, size: 64),
+                  child: const Icon(Icons.health_and_safety, color: AppColors.branco, size: 96),
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 'Vigilância sanitária de Ribeirão Preto',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.azul,
+                      letterSpacing: 0.4,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const Spacer(),
@@ -57,7 +62,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _ItemMenu(
-                leading: const Icon(Icons.badge_outlined, color: AppColors.azul),
+                leading: Image.asset('assets/icons/icon_info.png', width: 28, height: 28),
                 titulo: 'Agentes',
                 subtitulo: 'Fiscais, chefes e administrativos',
                 onTap: () {
