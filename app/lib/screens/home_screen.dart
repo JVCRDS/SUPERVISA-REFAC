@@ -32,8 +32,6 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Text('visa-campo', style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 4),
               Text(
                 'Vigilância sanitária de Ribeirão Preto',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -41,7 +39,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const Spacer(),
               _ItemMenu(
-                icone: Icons.assignment_outlined,
+                leading: Image.asset('assets/icons/marca.png', width: 28, height: 28),
                 titulo: 'Ocorrências',
                 subtitulo: 'Casos, inspeções e evidências',
                 onTap: () {
@@ -50,7 +48,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _ItemMenu(
-                icone: Icons.store_outlined,
+                leading: Image.asset('assets/icons/icon_estabelecimento.png', width: 28, height: 28),
                 titulo: 'Estabelecimentos',
                 subtitulo: 'Locais sujeitos a inspeção',
                 onTap: () {
@@ -59,7 +57,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _ItemMenu(
-                icone: Icons.badge_outlined,
+                leading: const Icon(Icons.badge_outlined, color: AppColors.azul),
                 titulo: 'Agentes',
                 subtitulo: 'Fiscais, chefes e administrativos',
                 onTap: () {
@@ -76,13 +74,13 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _ItemMenu extends StatelessWidget {
-  final IconData icone;
+  final Widget leading;
   final String titulo;
   final String subtitulo;
   final VoidCallback onTap;
 
   const _ItemMenu({
-    required this.icone,
+    required this.leading,
     required this.titulo,
     required this.subtitulo,
     required this.onTap,
@@ -100,7 +98,7 @@ class _ItemMenu extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(icone, color: AppColors.azul),
+                leading,
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(

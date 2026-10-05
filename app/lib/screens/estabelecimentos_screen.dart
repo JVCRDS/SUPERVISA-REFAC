@@ -78,7 +78,7 @@ class _EstabelecimentosScreenState extends State<EstabelecimentosScreen> {
                 ].where((parte) => parte != null && parte.isNotEmpty).join(', ');
                 return Card(
                   child: ListTile(
-                    leading: const Icon(Icons.store_outlined),
+                    leading: Image.asset('assets/icons/icon_estabelecimento.png', width: 32, height: 32),
                     title: Text(estabelecimento.nome),
                     subtitle: Text(
                       endereco.isEmpty
