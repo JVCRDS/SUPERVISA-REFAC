@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/ocorrencia.dart';
 import '../services/api_client.dart';
 import 'ocorrencia_detalhe_screen.dart';
+import 'ocorrencia_form_screen.dart';
 
 class OcorrenciasScreen extends StatefulWidget {
   const OcorrenciasScreen({super.key});
@@ -129,6 +130,18 @@ class _OcorrenciasScreenState extends State<OcorrenciasScreen> {
             );
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final criada = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (_) => const OcorrenciaFormScreen()),
+          );
+          if (criada == true) {
+            _recarregar();
+          }
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

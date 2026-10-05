@@ -4,6 +4,7 @@ import '../models/inspecao.dart';
 import '../models/ocorrencia.dart';
 import '../services/api_client.dart';
 import 'inspecao_detalhe_screen.dart';
+import 'inspecao_form_screen.dart';
 
 class OcorrenciaDetalheScreen extends StatefulWidget {
   final Ocorrencia ocorrencia;
@@ -127,6 +128,20 @@ class _OcorrenciaDetalheScreenState extends State<OcorrenciaDetalheScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final criada = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(
+              builder: (_) => InspecaoFormScreen(ocorrenciaId: widget.ocorrencia.id),
+            ),
+          );
+          if (criada == true) {
+            _recarregar();
+          }
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

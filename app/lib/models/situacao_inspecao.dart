@@ -20,4 +20,13 @@ enum SituacaoInspecao {
         return 'Em andamento';
     }
   }
+
+  String get codigo {
+    switch (this) {
+      case SituacaoInspecao.concluida:
+        return 'CONCLUIDA';
+      case SituacaoInspecao.emAndamento:
+        return 'EM_ANDAMENTO';
+    }
+  }
 }

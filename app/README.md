@@ -12,6 +12,9 @@ lib/
 ├── models/       # espelham o JSON devolvido pela API, sem lógica
 ├── services/      # ApiClient: uma chamada HTTP por método
 └── screens/      # telas; combinam dados de mais de um endpoint quando preciso
+
+assets/
+└── icons/        # logo e ícones do app (ver assets/icons/README.md)
 ```
 
 Sem gerenciador de estado externo (Provider/Riverpod/Bloc) por enquanto —
@@ -21,17 +24,31 @@ pra justificar, não algo pra antecipar.
 
 ## Telas
 
-Fluxo de navegação atual, pensado pro perfil Chefe/Supervisor acompanhar o
+A tela inicial (`screens/home_screen.dart`) é um menu com o logo do app e
+três atalhos: Ocorrências, Estabelecimentos e Agentes.
+
+Fluxo de ocorrências, pensado pro perfil Chefe/Supervisor acompanhar o
 andamento das ocorrências da sua área:
 
 1. **Ocorrências** (`screens/ocorrencias_screen.dart`) — lista todas as
    ocorrências, com nome do estabelecimento e da área resolvidos no
-   cliente.
-2. **Detalhe da ocorrência** (`screens/ocorrencia_detalhe_screen.dart`) —
-   descrição, datas e a lista de inspeções vinculadas.
-3. **Detalhe da inspeção** (`screens/inspecao_detalhe_screen.dart`) —
+   cliente. O botão flutuante abre o formulário de nova ocorrência.
+2. **Nova ocorrência** (`screens/ocorrencia_form_screen.dart`) — formulário
+   com área e estabelecimento (carregados da API) e descrição.
+3. **Detalhe da ocorrência** (`screens/ocorrencia_detalhe_screen.dart`) —
+   descrição, datas e a lista de inspeções vinculadas. O botão flutuante
+   abre o formulário de nova inspeção.
+4. **Nova inspeção** (`screens/inspecao_form_screen.dart`) — formulário com
+   data/hora, situação e observações gerais.
+5. **Detalhe da inspeção** (`screens/inspecao_detalhe_screen.dart`) —
    situação, observações, fiscais presentes (com destaque pro assinante) e
    evidências capturadas.
+
+Telas de consulta, sem formulário (os cadastros ainda são feitos pelo
+Swagger):
+
+- **Estabelecimentos** (`screens/estabelecimentos_screen.dart`).
+- **Agentes** (`screens/agentes_screen.dart`).
 
 A paleta de cores usada em todo o app está em `theme/app_colors.dart` e o
 `ThemeData` correspondente em `theme/app_theme.dart`.
@@ -76,6 +93,17 @@ flutter run -d chrome
 
 Aponta por padrão pra `http://localhost:8080` — sem truque de alias,
 porque o navegador roda direto na sua máquina, junto com a API.
+
+Sem Chrome/Chromium instalado (ex: só tem Firefox)? Use o modo
+`web-server`, que não depende do protocolo de depuração do Chrome — ele só
+sobe o servidor e você abre a URL no navegador que tiver:
+
+```bash
+flutter run -d web-server --web-port=8081
+```
+
+Depois abra `http://localhost:8081` manualmente. Hot reload continua
+funcionando normalmente.
 
 O `../start-dev.sh` já escolhe automaticamente entre Android/iOS e
 Chrome, dependendo do que estiver disponível.
