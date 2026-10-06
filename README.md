@@ -267,10 +267,14 @@ Em desenvolvimento.
       fiscal presente na inspeção, evidência — imutável — e log de
       auditoria, só leitura)
 - [x] Documentação interativa da API (Swagger UI)
-- [ ] Autenticação e perfis de acesso
+- [ ] Autenticação e perfis de acesso — login por CPF/senha implementado
+      (`POST /api/auth/login`, senha com hash BCrypt), mas sem
+      sessão/token nem rotas protegidas ainda; rota administrativa de
+      criação de agente também fica para essa etapa
 - [x] Registro de fiscais presentes na inspeção
-- [ ] Aplicativo Flutter — em andamento: tela de listagem de ocorrências
-      consumindo a API (`app/`)
+- [ ] Aplicativo Flutter (`app/`) — em andamento: login, menu, ocorrências
+      (listar, criar, detalhar), inspeções (criar, detalhar), e consulta
+      de estabelecimentos e agentes
 - [ ] Exportação do pacote de evidências
 
 ---

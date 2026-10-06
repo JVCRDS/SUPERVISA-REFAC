@@ -31,6 +31,7 @@ class Agente {
   final String id;
   final String nome;
   final String email;
+  final String? cpf;
   final Perfil perfil;
   final String areaId;
   final bool ativo;
@@ -40,6 +41,7 @@ class Agente {
     required this.id,
     required this.nome,
     required this.email,
+    this.cpf,
     required this.perfil,
     required this.areaId,
     required this.ativo,
@@ -51,6 +53,7 @@ class Agente {
       id: json['id'] as String,
       nome: json['nome'] as String,
       email: json['email'] as String,
+      cpf: json['cpf'] as String?,
       perfil: Perfil.fromJson(json['perfil'] as String),
       areaId: json['areaId'] as String,
       ativo: json['ativo'] as bool,

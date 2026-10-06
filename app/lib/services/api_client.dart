@@ -21,6 +21,11 @@ class ApiException implements Exception {
   String toString() => message;
 }
 
+class CredenciaisInvalidasException implements Exception {
+  @override
+  String toString() => 'CPF ou senha inválidos';
+}
+
 /// Cliente HTTP fino para a API do visa-campo. Cada método corresponde a um
 /// endpoint do backend e devolve o modelo já convertido do JSON.
 class ApiClient {
@@ -133,6 +138,23 @@ class ApiClient {
     );
     _verificarResposta(resposta);
     return Inspecao.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
+  }
+
+  /// Confere CPF e senha. O servidor só confirma a identidade do agente —
+  /// ainda não há sessão/token (fica para quando a autenticação de rotas
+  /// for implementada), então o próprio ApiClient não guarda nada após a
+  /// chamada; quem chama decide o que fazer com o [Agente] devolvido.
+  Future<Agente> login({required String cpf, required String senha}) async {
+    final resposta = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/api/auth/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'cpf': cpf, 'senha': senha}),
+    );
+    if (resposta.statusCode == 401) {
+      throw CredenciaisInvalidasException();
+    }
+    _verificarResposta(resposta);
+    return Agente.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
   }
 
   void _verificarResposta(http.Response resposta) {

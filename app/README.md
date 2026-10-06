@@ -24,8 +24,11 @@ pra justificar, não algo pra antecipar.
 
 ## Telas
 
-A tela inicial (`screens/home_screen.dart`) é um menu com o logo do app e
-três atalhos: Ocorrências, Estabelecimentos e Agentes.
+A tela inicial do app é o **login** (`screens/login_screen.dart`), por CPF
+e senha. Não existe tela de autocadastro de propósito — o agente é criado
+via administração (ver seção "Login" abaixo). Login bem-sucedido leva pro
+menu (`screens/home_screen.dart`), com o logo do app e três atalhos:
+Ocorrências, Estabelecimentos e Agentes.
 
 Fluxo de ocorrências, pensado pro perfil Chefe/Supervisor acompanhar o
 andamento das ocorrências da sua área:
@@ -52,6 +55,20 @@ Swagger):
 
 A paleta de cores usada em todo o app está em `theme/app_colors.dart` e o
 `ThemeData` correspondente em `theme/app_theme.dart`.
+
+## Login
+
+`POST /api/auth/login` confere CPF e senha contra o agente cadastrado
+(senha comparada por hash BCrypt, nunca em texto puro) e devolve os dados
+do agente em caso de sucesso. **Isso é só a confirmação de identidade** —
+ainda não existe sessão/token, nem proteção de rota no backend; qualquer
+endpoint continua acessível sem login, inclusive `POST /api/agentes`. Essa
+camada de autenticação (token, rotas protegidas, e a rota administrativa
+de criação de agente) é a próxima etapa.
+
+Pra testar o login agora, crie um agente com CPF e senha pelo Swagger
+(`POST /api/agentes`, campos `cpf` — 11 dígitos, sem pontuação — e
+`senha` em texto puro, que o servidor faz o hash antes de salvar).
 
 ## Pré-requisitos
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,9 +23,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class AgenteController {
 
     private final AgenteRepository agenteRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AgenteController(AgenteRepository agenteRepository) {
+    public AgenteController(AgenteRepository agenteRepository, PasswordEncoder passwordEncoder) {
         this.agenteRepository = agenteRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -37,6 +40,10 @@ public class AgenteController {
         return buscarOuFalhar(id);
     }
 
+    // TODO: endpoint ainda aberto. Deve virar rota administrativa, protegida
+    // por autenticação de administrador, quando essa autenticação existir —
+    // hoje não há tela de autocadastro no app de propósito (agente é criado
+    // via administração), mas o endpoint em si ainda não está restrito.
     @PostMapping
     public ResponseEntity<Agente> criar(@Valid @RequestBody Agente agente) {
         if (agente.getId() == null) {
@@ -45,6 +52,7 @@ public class AgenteController {
         if (agente.getCriadoEm() == null) {
             agente.setCriadoEm(OffsetDateTime.now());
         }
+        agente.setSenha(passwordEncoder.encode(agente.getSenha()));
         Agente salvo = agenteRepository.save(agente);
         return ResponseEntity.created(URI.create("/api/agentes/" + salvo.getId())).body(salvo);
     }
@@ -54,7 +62,8 @@ public class AgenteController {
         Agente existente = buscarOuFalhar(id);
         existente.setNome(agente.getNome());
         existente.setEmail(agente.getEmail());
-        existente.setSenhaHash(agente.getSenhaHash());
+        existente.setCpf(agente.getCpf());
+        existente.setSenha(passwordEncoder.encode(agente.getSenha()));
         existente.setPerfil(agente.getPerfil());
         existente.setAreaId(agente.getAreaId());
         existente.setAtivo(agente.isAtivo());

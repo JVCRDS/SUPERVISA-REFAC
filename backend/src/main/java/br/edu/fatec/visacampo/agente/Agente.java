@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -29,11 +30,19 @@ public class Agente {
     @Column(nullable = false, unique = true, length = 180)
     private String email;
 
-    // write-only: nunca volta no JSON de resposta, só é aceita na entrada.
+    @NotBlank(message = "CPF é obrigatório")
+    @Pattern(regexp = "\\d{11}", message = "CPF deve ter 11 dígitos, sem pontuação")
+    @Column(nullable = true, unique = true, length = 11)
+    private String cpf;
+
+    // write-only: o cliente manda a senha em texto puro, nunca volta no JSON
+    // de resposta. O controller substitui o valor pelo hash (BCrypt) antes
+    // de persistir — por isso o nome da coluna é senha_hash, mas o que
+    // chega aqui é a senha em claro.
     @NotBlank(message = "senha é obrigatória")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(value = "senha", access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "senha_hash", nullable = false)
-    private String senhaHash;
+    private String senha;
 
     @NotNull(message = "perfil é obrigatório")
     @Enumerated(EnumType.STRING)
@@ -74,12 +83,20 @@ public class Agente {
         this.email = email;
     }
 
-    public String getSenhaHash() {
-        return senhaHash;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setSenhaHash(String senhaHash) {
-        this.senhaHash = senhaHash;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public Perfil getPerfil() {
