@@ -140,6 +140,27 @@ class ApiClient {
     return Inspecao.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
   }
 
+  /// Registra um fiscal presente numa inspeção. O banco garante, com um
+  /// índice único parcial, que no máximo um fiscal por inspeção tenha
+  /// `assinante = true`.
+  Future<InspecaoFiscal> criarInspecaoFiscal({
+    required String inspecaoId,
+    required String agenteId,
+    required bool assinante,
+  }) async {
+    final resposta = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/api/inspecoes-fiscais'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'inspecaoId': inspecaoId,
+        'agenteId': agenteId,
+        'assinante': assinante,
+      }),
+    );
+    _verificarResposta(resposta);
+    return InspecaoFiscal.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
+  }
+
   /// Confere CPF e senha. O servidor só confirma a identidade do agente —
   /// ainda não há sessão/token (fica para quando a autenticação de rotas
   /// for implementada), então o próprio ApiClient não guarda nada após a

@@ -42,7 +42,9 @@ andamento das ocorrências da sua área:
    descrição, datas e a lista de inspeções vinculadas. O botão flutuante
    abre o formulário de nova inspeção.
 4. **Nova inspeção** (`screens/inspecao_form_screen.dart`) — formulário com
-   data/hora, situação e observações gerais.
+   data/hora, situação, observações gerais e a lista de fiscais (agentes
+   com perfil Fiscal) pra marcar quem esteve presente e, entre eles, quem
+   assina o auto de infração.
 5. **Detalhe da inspeção** (`screens/inspecao_detalhe_screen.dart`) —
    situação, observações, fiscais presentes (com destaque pro assinante) e
    evidências capturadas.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/agente.dart';
 import '../models/situacao_inspecao.dart';
 import '../services/api_client.dart';
 
@@ -18,10 +19,24 @@ class _InspecaoFormScreenState extends State<InspecaoFormScreen> {
   final ApiClient _apiClient = ApiClient();
   final _observacoesController = TextEditingController();
 
+  late Future<List<Agente>> _futureFiscais;
   DateTime _dataHora = DateTime.now();
   SituacaoInspecao _situacao = SituacaoInspecao.emAndamento;
+  final Set<String> _presentes = {};
+  String? _assinanteId;
   bool _salvando = false;
   String? _erro;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureFiscais = _carregarFiscais();
+  }
+
+  Future<List<Agente>> _carregarFiscais() async {
+    final agentes = await _apiClient.listarAgentes();
+    return agentes.where((a) => a.perfil == Perfil.fiscal && a.ativo).toList();
+  }
 
   @override
   void dispose() {
@@ -49,6 +64,17 @@ class _InspecaoFormScreenState extends State<InspecaoFormScreen> {
     });
   }
 
+  void _alternarPresenca(String agenteId, bool? presente) {
+    setState(() {
+      if (presente == true) {
+        _presentes.add(agenteId);
+      } else {
+        _presentes.remove(agenteId);
+        if (_assinanteId == agenteId) _assinanteId = null;
+      }
+    });
+  }
+
   Future<void> _salvar() async {
     setState(() {
       _salvando = true;
@@ -56,13 +82,22 @@ class _InspecaoFormScreenState extends State<InspecaoFormScreen> {
     });
 
     try {
-      await _apiClient.criarInspecao(
+      final inspecao = await _apiClient.criarInspecao(
         ocorrenciaId: widget.ocorrenciaId,
         dataHora: _dataHora,
         situacao: _situacao,
         observacoesGerais:
             _observacoesController.text.trim().isEmpty ? null : _observacoesController.text.trim(),
       );
+
+      for (final agenteId in _presentes) {
+        await _apiClient.criarInspecaoFiscal(
+          inspecaoId: inspecao.id,
+          agenteId: agenteId,
+          assinante: agenteId == _assinanteId,
+        );
+      }
+
       if (mounted) {
         Navigator.pop(context, true);
       }
@@ -109,6 +144,69 @@ class _InspecaoFormScreenState extends State<InspecaoFormScreen> {
             controller: _observacoesController,
             decoration: const InputDecoration(labelText: 'Observações gerais (opcional)'),
             maxLines: 3,
+          ),
+          const SizedBox(height: 24),
+          Text('Fiscais presentes', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 4),
+          Text(
+            'Marque quem esteve na inspeção e, entre eles, quem assina o auto de infração.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<List<Agente>>(
+            future: _futureFiscais,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (snapshot.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Text('Não foi possível carregar os fiscais.\n${snapshot.error}'),
+                );
+              }
+
+              final fiscais = snapshot.data ?? const [];
+              if (fiscais.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Text('Nenhum fiscal cadastrado.'),
+                );
+              }
+
+              return Column(
+                children: fiscais.map((fiscal) {
+                  final presente = _presentes.contains(fiscal.id);
+                  return Card(
+                    child: CheckboxListTile(
+                      value: presente,
+                      onChanged: (valor) => _alternarPresenca(fiscal.id, valor),
+                      title: Text(fiscal.nome),
+                      subtitle: presente
+                          ? TextButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _assinanteId = _assinanteId == fiscal.id ? null : fiscal.id;
+                                });
+                              },
+                              icon: Icon(
+                                _assinanteId == fiscal.id ? Icons.star : Icons.star_border,
+                                size: 18,
+                              ),
+                              label: Text(
+                                _assinanteId == fiscal.id ? 'Assinante do auto' : 'Marcar como assinante',
+                              ),
+                            )
+                          : null,
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           ),
           if (_erro != null) ...[
             const SizedBox(height: 16),
