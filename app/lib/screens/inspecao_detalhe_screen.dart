@@ -4,6 +4,7 @@ import '../models/evidencia.dart';
 import '../models/inspecao.dart';
 import '../models/inspecao_fiscal.dart';
 import '../services/api_client.dart';
+import 'evidencia_form_screen.dart';
 
 class InspecaoDetalheScreen extends StatefulWidget {
   final Inspecao inspecao;
@@ -153,6 +154,20 @@ class _InspecaoDetalheScreenState extends State<InspecaoDetalheScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final criada = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EvidenciaFormScreen(inspecaoId: widget.inspecao.id),
+            ),
+          );
+          if (criada == true) {
+            _recarregar();
+          }
+        },
+        child: const Icon(Icons.add_a_photo_outlined),
       ),
     );
   }

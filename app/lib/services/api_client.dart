@@ -193,6 +193,36 @@ class ApiClient {
     return InspecaoFiscal.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
   }
 
+  /// Registra os metadados de uma evidência. O arquivo em si não é
+  /// enviado — só fica no dispositivo (decisão de arquitetura) —, então
+  /// aqui só trafegam nome, hash SHA-256, autor, inspeção e data/local de
+  /// captura.
+  Future<Evidencia> criarEvidencia({
+    required String inspecaoId,
+    required String autorId,
+    required String nomeArquivo,
+    required String hashSha256,
+    required DateTime capturadoEm,
+    double? latitude,
+    double? longitude,
+  }) async {
+    final resposta = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/api/evidencias'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'inspecaoId': inspecaoId,
+        'autorId': autorId,
+        'nomeArquivo': nomeArquivo,
+        'hashSha256': hashSha256,
+        'capturadoEm': capturadoEm.toUtc().toIso8601String(),
+        'latitude': latitude,
+        'longitude': longitude,
+      }),
+    );
+    _verificarResposta(resposta);
+    return Evidencia.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
+  }
+
   /// Confere CPF e senha. O servidor só confirma a identidade do agente —
   /// ainda não há sessão/token (fica para quando a autenticação de rotas
   /// for implementada), então o próprio ApiClient não guarda nada após a

@@ -47,7 +47,14 @@ andamento das ocorrências da sua área:
    assina o auto de infração.
 5. **Detalhe da inspeção** (`screens/inspecao_detalhe_screen.dart`) —
    situação, observações, fiscais presentes (com destaque pro assinante) e
-   evidências capturadas.
+   evidências capturadas. O botão flutuante abre o formulário de nova
+   evidência.
+6. **Nova evidência** (`screens/evidencia_form_screen.dart`) — escolhe uma
+   foto (câmera ou galeria), calcula o hash SHA-256 no próprio aparelho e
+   pede o agente autor da captura. Só os metadados (nome do arquivo, hash,
+   autor, data) vão pro servidor — o arquivo em si fica só no dispositivo,
+   por decisão de arquitetura (ver seção "Decisões de arquitetura" no
+   `README.md` da raiz).
 
 - **Estabelecimentos** (`screens/estabelecimentos_screen.dart`) — lista, com
   botão flutuante que abre o formulário de novo estabelecimento
