@@ -89,6 +89,14 @@ captura para permitir verificação posterior de integridade.
 **Esquema versionado por migrations.** O banco é criado e evoluído pelo Flyway;
 o Hibernate opera em modo de validação e não altera estruturas.
 
+**Sessão por token em tabela própria, não JWT.** Login grava um token
+aleatório na tabela `sessao` (com expiração) em vez de emitir um JWT
+autocontido — evita depender de gerenciamento de chave de assinatura e
+mantém a opção de invalidar uma sessão a qualquer momento (logout),
+coerente com a escolha de não usar o Spring Security completo, só o
+módulo de criptografia (`spring-security-crypto`) e um filtro próprio
+(`AutenticacaoFiltro`).
+
 ---
 
 ## Tecnologias
@@ -158,6 +166,31 @@ Postman:
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
+
+### Autenticação pelo Swagger
+
+Toda rota `/api/**`, exceto o login, exige um token de sessão no header
+`Authorization: Bearer <token>` — sem ele, a resposta é 401. A migration
+`V7__seed_admin.sql` semeia um administrador padrão num banco novo, pra
+não travar nesse ponto:
+
+| CPF | Senha | Perfil |
+| --- | --- | --- |
+| `00000000000` | `visa@123` | `ADMINISTRATIVO` |
+
+**Troque essa senha (ou desative o agente) antes de qualquer ambiente que
+não seja local.**
+
+Passo a passo no Swagger:
+
+1. `POST /api/auth/login` com `{"cpf": "00000000000", "senha": "visa@123"}`
+   — a resposta traz o `token`.
+2. Botão **Authorize** (cadeado no topo da página) — cole o token (sem o
+   prefixo `Bearer `) e confirme. O Swagger passa a enviar o header em
+   toda chamada seguinte, até você fechar a aba ou o token expirar (12h).
+3. Agora qualquer outra rota funciona normalmente, inclusive
+   `POST /api/agentes` — só que essa, especificamente, exige que o agente
+   autenticado tenha perfil `ADMINISTRATIVO`, senão responde 403.
 
 ### Criando uma ocorrência de teste pelo Swagger
 
@@ -271,10 +304,11 @@ Em desenvolvimento.
       fiscal presente na inspeção, evidência — imutável — e log de
       auditoria, só leitura)
 - [x] Documentação interativa da API (Swagger UI)
-- [ ] Autenticação e perfis de acesso — login por CPF/senha implementado
-      (`POST /api/auth/login`, senha com hash BCrypt), mas sem
-      sessão/token nem rotas protegidas ainda; rota administrativa de
-      criação de agente também fica para essa etapa
+- [x] Autenticação e perfis de acesso — login por CPF/senha
+      (`POST /api/auth/login`, senha com hash BCrypt), com sessão por
+      token (`Authorization: Bearer <token>`, expira em 12h) exigida em
+      toda rota `/api/**`; `POST /api/agentes` é administrativa, só
+      `ADMINISTRATIVO` autenticado pode criar agente
 - [x] Registro de fiscais presentes na inspeção
 - [ ] Aplicativo Flutter (`app/`) — em andamento: login, menu, ocorrências
       (listar, criar, detalhar), inspeções (criar, detalhar), e consulta

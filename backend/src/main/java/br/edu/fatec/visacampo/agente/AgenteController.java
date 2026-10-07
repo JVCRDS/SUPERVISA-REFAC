@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,12 +41,16 @@ public class AgenteController {
         return buscarOuFalhar(id);
     }
 
-    // TODO: endpoint ainda aberto. Deve virar rota administrativa, protegida
-    // por autenticação de administrador, quando essa autenticação existir —
-    // hoje não há tela de autocadastro no app de propósito (agente é criado
-    // via administração), mas o endpoint em si ainda não está restrito.
+    // Rota administrativa: só quem já está autenticado como ADMINISTRATIVO
+    // pode criar agente. O agente autenticado chega como atributo de
+    // requisição, preenchido pelo AutenticacaoFiltro a partir do token.
     @PostMapping
-    public ResponseEntity<Agente> criar(@Valid @RequestBody Agente agente) {
+    public ResponseEntity<Agente> criar(
+            @Valid @RequestBody Agente agente,
+            @RequestAttribute("agenteAutenticado") Agente agenteAutenticado) {
+        if (agenteAutenticado.getPerfil() != Perfil.ADMINISTRATIVO) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas administradores podem criar agentes");
+        }
         if (agente.getId() == null) {
             agente.setId(UUID.randomUUID());
         }

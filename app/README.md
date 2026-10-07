@@ -68,26 +68,33 @@ Telas de consulta, sem formulário (o cadastro ainda é feito pelo Swagger):
 A paleta de cores usada em todo o app está em `theme/app_colors.dart` e o
 `ThemeData` correspondente em `theme/app_theme.dart`.
 
-## Login
+## Login e sessão
 
 `POST /api/auth/login` confere CPF e senha contra o agente cadastrado
-(senha comparada por hash BCrypt, nunca em texto puro) e devolve os dados
-do agente em caso de sucesso. **Isso é só a confirmação de identidade** —
-ainda não existe sessão/token, nem proteção de rota no backend; qualquer
-endpoint continua acessível sem login, inclusive `POST /api/agentes`. Essa
-camada de autenticação (token, rotas protegidas, e a rota administrativa
-de criação de agente) é a próxima etapa.
+(senha comparada por hash BCrypt, nunca em texto puro) e, em caso de
+sucesso, devolve o agente **e um token de sessão** (`{"agente": {...},
+"token": "...", "expiraEm": "..."}`). A partir daí, toda chamada a
+qualquer outra rota `/api/**` precisa enviar esse token em
+`Authorization: Bearer <token>` — sem ele, a API responde 401. O
+`ApiClient` (`services/api_client.dart`) guarda o token num campo
+`static` depois do login e já inclui esse header em toda chamada
+seguinte; o botão de sair, no canto superior da tela inicial, chama
+`POST /api/auth/logout` e descarta o token local. Sessões expiram
+depois de 12h mesmo sem logout explícito.
 
-Pra testar o login agora, crie um agente com CPF e senha pelo Swagger
-(`POST /api/agentes`, campos `cpf` — 11 dígitos, sem pontuação — e
-`senha` em texto puro, que o servidor faz o hash antes de salvar). O campo
-`perfil` aceita um destes três valores (`br.edu.fatec.visacampo.agente.Perfil`):
+O campo `perfil` aceita um destes três valores
+(`br.edu.fatec.visacampo.agente.Perfil`):
 
 | Valor | Uso |
 | --- | --- |
 | `ADMINISTRATIVO` | Agente administrativo — distribui as ocorrências pras áreas |
 | `CHEFE` | Chefe de área — define o fiscal responsável |
 | `FISCAL` | Fiscal — executa as inspeções em campo |
+
+Criar agente (`POST /api/agentes`) agora é uma rota administrativa: só
+funciona autenticado como `ADMINISTRATIVO` (ver seção "Autenticação pelo
+Swagger" no `README.md` da raiz para o agente administrador padrão usado
+pra logar a primeira vez).
 
 ## Exclusão
 

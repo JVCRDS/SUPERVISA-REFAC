@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../models/agente.dart';
+import '../services/api_client.dart';
 import '../theme/app_colors.dart';
 import 'agentes_screen.dart';
 import 'estabelecimentos_screen.dart';
+import 'login_screen.dart';
 import 'ocorrencias_screen.dart';
 
 /// Tela inicial: logo do app e menu de navegação pras demais telas.
@@ -12,9 +14,30 @@ class HomeScreen extends StatelessWidget {
 
   const HomeScreen({super.key, required this.agenteLogado});
 
+  Future<void> _sair(BuildContext context) async {
+    await ApiClient().logout();
+    if (!context.mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
+            onPressed: () => _sair(context),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),

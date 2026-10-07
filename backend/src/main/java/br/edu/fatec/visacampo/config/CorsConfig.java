@@ -9,9 +9,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * clientes Android/iOS/curl isso nunca foi um problema, CORS é regra
  * aplicada pelo navegador, não pelo servidor nem por outros clientes HTTP.
  *
- * Origem liberada geral porque a API ainda não usa cookie/sessão (é tudo
- * sem estado, sem autenticação implementada) — revisar quando a
- * autenticação entrar no roadmap.
+ * Origem liberada geral porque a autenticação usa um token no header
+ * Authorization, não cookie — não há sessão de navegador pra proteger
+ * com uma origem restrita.
  */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
