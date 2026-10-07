@@ -80,7 +80,14 @@ de criação de agente) é a próxima etapa.
 
 Pra testar o login agora, crie um agente com CPF e senha pelo Swagger
 (`POST /api/agentes`, campos `cpf` — 11 dígitos, sem pontuação — e
-`senha` em texto puro, que o servidor faz o hash antes de salvar).
+`senha` em texto puro, que o servidor faz o hash antes de salvar). O campo
+`perfil` aceita um destes três valores (`br.edu.fatec.visacampo.agente.Perfil`):
+
+| Valor | Uso |
+| --- | --- |
+| `ADMINISTRATIVO` | Agente administrativo — distribui as ocorrências pras áreas |
+| `CHEFE` | Chefe de área — define o fiscal responsável |
+| `FISCAL` | Fiscal — executa as inspeções em campo |
 
 ## Pré-requisitos
 
