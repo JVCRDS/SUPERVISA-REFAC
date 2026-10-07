@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/estabelecimento.dart';
 import '../services/api_client.dart';
+import 'estabelecimento_form_screen.dart';
 
 class EstabelecimentosScreen extends StatefulWidget {
   const EstabelecimentosScreen({super.key});
@@ -91,6 +92,18 @@ class _EstabelecimentosScreenState extends State<EstabelecimentosScreen> {
             );
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final criado = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (_) => const EstabelecimentoFormScreen()),
+          );
+          if (criado == true) {
+            _recarregar();
+          }
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

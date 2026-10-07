@@ -62,6 +62,38 @@ class ApiClient {
     return lista.map((item) => Estabelecimento.fromJson(item as Map<String, dynamic>)).toList();
   }
 
+  /// Cria um estabelecimento. Só `nome` é obrigatório — `municipio` e `uf`
+  /// usam o padrão do servidor (Ribeirão Preto/SP) quando omitidos.
+  Future<Estabelecimento> criarEstabelecimento({
+    required String nome,
+    String? cnpj,
+    String? logradouro,
+    String? numero,
+    String? complemento,
+    String? bairro,
+    String? municipio,
+    String? uf,
+    String? cep,
+  }) async {
+    final corpo = <String, dynamic>{'nome': nome};
+    if (cnpj != null && cnpj.isNotEmpty) corpo['cnpj'] = cnpj;
+    if (logradouro != null && logradouro.isNotEmpty) corpo['logradouro'] = logradouro;
+    if (numero != null && numero.isNotEmpty) corpo['numero'] = numero;
+    if (complemento != null && complemento.isNotEmpty) corpo['complemento'] = complemento;
+    if (bairro != null && bairro.isNotEmpty) corpo['bairro'] = bairro;
+    if (municipio != null && municipio.isNotEmpty) corpo['municipio'] = municipio;
+    if (uf != null && uf.isNotEmpty) corpo['uf'] = uf;
+    if (cep != null && cep.isNotEmpty) corpo['cep'] = cep;
+
+    final resposta = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/api/estabelecimentos'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(corpo),
+    );
+    _verificarResposta(resposta);
+    return Estabelecimento.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
+  }
+
   Future<List<Inspecao>> listarInspecoes() async {
     final resposta = await http.get(Uri.parse('${ApiConfig.baseUrl}/api/inspecoes'));
     _verificarResposta(resposta);

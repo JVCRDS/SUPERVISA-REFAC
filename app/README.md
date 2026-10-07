@@ -49,10 +49,13 @@ andamento das ocorrências da sua área:
    situação, observações, fiscais presentes (com destaque pro assinante) e
    evidências capturadas.
 
-Telas de consulta, sem formulário (os cadastros ainda são feitos pelo
-Swagger):
+- **Estabelecimentos** (`screens/estabelecimentos_screen.dart`) — lista, com
+  botão flutuante que abre o formulário de novo estabelecimento
+  (`screens/estabelecimento_form_screen.dart`: nome obrigatório, endereço e
+  CNPJ opcionais, município e UF com o padrão do servidor).
 
-- **Estabelecimentos** (`screens/estabelecimentos_screen.dart`).
+Telas de consulta, sem formulário (o cadastro ainda é feito pelo Swagger):
+
 - **Agentes** (`screens/agentes_screen.dart`).
 
 A paleta de cores usada em todo o app está em `theme/app_colors.dart` e o
