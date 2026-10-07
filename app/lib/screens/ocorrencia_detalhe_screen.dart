@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/agente.dart';
 import '../models/inspecao.dart';
 import '../models/ocorrencia.dart';
 import '../services/api_client.dart';
@@ -10,12 +11,14 @@ class OcorrenciaDetalheScreen extends StatefulWidget {
   final Ocorrencia ocorrencia;
   final String nomeArea;
   final String nomeEstabelecimento;
+  final Agente agenteLogado;
 
   const OcorrenciaDetalheScreen({
     super.key,
     required this.ocorrencia,
     required this.nomeArea,
     required this.nomeEstabelecimento,
+    required this.agenteLogado,
   });
 
   @override
@@ -115,7 +118,10 @@ class _OcorrenciaDetalheScreenState extends State<OcorrenciaDetalheScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => InspecaoDetalheScreen(inspecao: inspecao),
+                                  builder: (_) => InspecaoDetalheScreen(
+                                    inspecao: inspecao,
+                                    agenteLogado: widget.agenteLogado,
+                                  ),
                                 ),
                               );
                             },

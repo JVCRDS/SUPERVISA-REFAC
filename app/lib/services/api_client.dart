@@ -240,6 +240,31 @@ class ApiClient {
     return Agente.fromJson(jsonDecode(resposta.body) as Map<String, dynamic>);
   }
 
+  /// Exclui uma ocorrência. Falha (o servidor devolve erro) se já existir
+  /// inspeção vinculada — a FK não permite excluir o caso enquanto houver
+  /// histórico de inspeções.
+  Future<void> excluirOcorrencia(String id) async {
+    final resposta = await http.delete(Uri.parse('${ApiConfig.baseUrl}/api/ocorrencias/$id'));
+    _verificarResposta(resposta);
+  }
+
+  /// Exclui um estabelecimento. Falha se já existir ocorrência vinculada.
+  Future<void> excluirEstabelecimento(String id) async {
+    final resposta = await http.delete(Uri.parse('${ApiConfig.baseUrl}/api/estabelecimentos/$id'));
+    _verificarResposta(resposta);
+  }
+
+  /// Exclui uma evidência. Exige o agente responsável pela exclusão —
+  /// o servidor grava o estado anterior em log de auditoria antes de
+  /// remover (evidência não é editável, só excluível, por decisão de
+  /// arquitetura).
+  Future<void> excluirEvidencia(String id, {required String agenteId}) async {
+    final resposta = await http.delete(
+      Uri.parse('${ApiConfig.baseUrl}/api/evidencias/$id?agenteId=$agenteId'),
+    );
+    _verificarResposta(resposta);
+  }
+
   void _verificarResposta(http.Response resposta) {
     if (resposta.statusCode >= 400) {
       throw ApiException('Erro ${resposta.statusCode} ao consultar ${resposta.request?.url}');

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/agente.dart';
 import '../theme/app_colors.dart';
 import 'agentes_screen.dart';
 import 'estabelecimentos_screen.dart';
@@ -7,7 +8,9 @@ import 'ocorrencias_screen.dart';
 
 /// Tela inicial: logo do app e menu de navegação pras demais telas.
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final Agente agenteLogado;
+
+  const HomeScreen({super.key, required this.agenteLogado});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +51,10 @@ class HomeScreen extends StatelessWidget {
                 titulo: 'Ocorrências',
                 subtitulo: 'Casos, inspeções e evidências',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const OcorrenciasScreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => OcorrenciasScreen(agenteLogado: agenteLogado)),
+                  );
                 },
               ),
               const SizedBox(height: 12),
@@ -57,7 +63,10 @@ class HomeScreen extends StatelessWidget {
                 titulo: 'Estabelecimentos',
                 subtitulo: 'Locais sujeitos a inspeção',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const EstabelecimentosScreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => EstabelecimentosScreen(agenteLogado: agenteLogado)),
+                  );
                 },
               ),
               const SizedBox(height: 12),

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../models/agente.dart';
 import '../models/evidencia.dart';
 import '../models/inspecao.dart';
 import '../models/inspecao_fiscal.dart';
 import '../services/api_client.dart';
+import '../widgets/confirmar_exclusao.dart';
 import 'evidencia_form_screen.dart';
 
 class InspecaoDetalheScreen extends StatefulWidget {
   final Inspecao inspecao;
+  final Agente agenteLogado;
 
-  const InspecaoDetalheScreen({super.key, required this.inspecao});
+  const InspecaoDetalheScreen({super.key, required this.inspecao, required this.agenteLogado});
 
   @override
   State<InspecaoDetalheScreen> createState() => _InspecaoDetalheScreenState();
@@ -147,7 +150,13 @@ class _InspecaoDetalheScreenState extends State<InspecaoDetalheScreen> {
                         child: Text('Nenhuma evidência registrada.'),
                       )
                     else
-                      ...detalhes.evidencias.map((evidencia) => _CartaoEvidencia(evidencia: evidencia)),
+                      ...detalhes.evidencias.map(
+                        (evidencia) => _CartaoEvidencia(
+                          evidencia: evidencia,
+                          agenteLogado: widget.agenteLogado,
+                          onExcluida: _recarregar,
+                        ),
+                      ),
                   ],
                 );
               },
@@ -204,8 +213,33 @@ class _InspecaoDetalhes {
 
 class _CartaoEvidencia extends StatelessWidget {
   final Evidencia evidencia;
+  final Agente agenteLogado;
+  final Future<void> Function() onExcluida;
 
-  const _CartaoEvidencia({required this.evidencia});
+  const _CartaoEvidencia({
+    required this.evidencia,
+    required this.agenteLogado,
+    required this.onExcluida,
+  });
+
+  Future<void> _excluir(BuildContext context) async {
+    final confirmado = await confirmarExclusao(
+      context,
+      titulo: 'Excluir evidência?',
+      mensagem: 'Essa ação não pode ser desfeita.',
+    );
+    if (!confirmado) return;
+
+    try {
+      await ApiClient().excluirEvidencia(evidencia.id, agenteId: agenteLogado.id);
+      await onExcluida();
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Não foi possível excluir a evidência.\n$e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +248,13 @@ class _CartaoEvidencia extends StatelessWidget {
         leading: const Icon(Icons.image_outlined),
         title: Text(evidencia.nomeArquivo),
         subtitle: Text('Capturada em ${_formatarDataHora(evidencia.capturadoEm)}'),
+        trailing: agenteLogado.podeExcluir
+            ? IconButton(
+                icon: const Icon(Icons.delete_outline),
+                tooltip: 'Excluir',
+                onPressed: () => _excluir(context),
+              )
+            : null,
       ),
     );
   }

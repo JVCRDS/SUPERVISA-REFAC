@@ -37,9 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final cpfDigitos = _cpfController.text.replaceAll(RegExp(r'\D'), '');
-      await _apiClient.login(cpf: cpfDigitos, senha: _senhaController.text);
+      final agente = await _apiClient.login(cpf: cpfDigitos, senha: _senhaController.text);
       if (mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomeScreen(agenteLogado: agente)),
+        );
       }
     } on CredenciaisInvalidasException catch (e) {
       setState(() => _erro = e.toString());

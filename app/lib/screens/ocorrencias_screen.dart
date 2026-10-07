@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../models/agente.dart';
 import '../models/ocorrencia.dart';
 import '../services/api_client.dart';
+import '../widgets/confirmar_exclusao.dart';
 import 'ocorrencia_detalhe_screen.dart';
 import 'ocorrencia_form_screen.dart';
 
 class OcorrenciasScreen extends StatefulWidget {
-  const OcorrenciasScreen({super.key});
+  final Agente agenteLogado;
+
+  const OcorrenciasScreen({super.key, required this.agenteLogado});
 
   @override
   State<OcorrenciasScreen> createState() => _OcorrenciasScreenState();
@@ -28,6 +32,26 @@ class _OcorrenciasScreenState extends State<OcorrenciasScreen> {
       _futureOcorrencias = futuro;
     });
     return futuro;
+  }
+
+  Future<void> _excluir(Ocorrencia ocorrencia) async {
+    final confirmado = await confirmarExclusao(
+      context,
+      titulo: 'Excluir ocorrência?',
+      mensagem:
+          'Essa ação não pode ser desfeita. Só é possível excluir ocorrências sem inspeções vinculadas.',
+    );
+    if (!confirmado) return;
+
+    try {
+      await _apiClient.excluirOcorrencia(ocorrencia.id);
+      _recarregar();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Não foi possível excluir a ocorrência.\n$e')),
+      );
+    }
   }
 
   /// Busca as ocorrências e resolve nome de área/estabelecimento no
@@ -111,7 +135,18 @@ class _OcorrenciasScreenState extends State<OcorrenciasScreen> {
                   child: ListTile(
                     title: Text(item.nomeEstabelecimento),
                     subtitle: Text('${item.nomeArea} · ${item.ocorrencia.descricao}'),
-                    trailing: Text(_formatarData(item.ocorrencia.criadoEm)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(_formatarData(item.ocorrencia.criadoEm)),
+                        if (widget.agenteLogado.podeExcluir)
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline),
+                            tooltip: 'Excluir',
+                            onPressed: () => _excluir(item.ocorrencia),
+                          ),
+                      ],
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -120,6 +155,7 @@ class _OcorrenciasScreenState extends State<OcorrenciasScreen> {
                             ocorrencia: item.ocorrencia,
                             nomeArea: item.nomeArea,
                             nomeEstabelecimento: item.nomeEstabelecimento,
+                            agenteLogado: widget.agenteLogado,
                           ),
                         ),
                       );

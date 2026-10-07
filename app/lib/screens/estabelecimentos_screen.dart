@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../models/agente.dart';
 import '../models/estabelecimento.dart';
 import '../services/api_client.dart';
+import '../widgets/confirmar_exclusao.dart';
 import 'estabelecimento_form_screen.dart';
 
 class EstabelecimentosScreen extends StatefulWidget {
-  const EstabelecimentosScreen({super.key});
+  final Agente agenteLogado;
+
+  const EstabelecimentosScreen({super.key, required this.agenteLogado});
 
   @override
   State<EstabelecimentosScreen> createState() => _EstabelecimentosScreenState();
@@ -27,6 +31,26 @@ class _EstabelecimentosScreenState extends State<EstabelecimentosScreen> {
       _futureEstabelecimentos = futuro;
     });
     return futuro;
+  }
+
+  Future<void> _excluir(Estabelecimento estabelecimento) async {
+    final confirmado = await confirmarExclusao(
+      context,
+      titulo: 'Excluir estabelecimento?',
+      mensagem:
+          'Essa ação não pode ser desfeita. Só é possível excluir estabelecimentos sem ocorrências vinculadas.',
+    );
+    if (!confirmado) return;
+
+    try {
+      await _apiClient.excluirEstabelecimento(estabelecimento.id);
+      _recarregar();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Não foi possível excluir o estabelecimento.\n$e')),
+      );
+    }
   }
 
   @override
@@ -86,6 +110,13 @@ class _EstabelecimentosScreenState extends State<EstabelecimentosScreen> {
                           ? '${estabelecimento.municipio}/${estabelecimento.uf}'
                           : '$endereco · ${estabelecimento.municipio}/${estabelecimento.uf}',
                     ),
+                    trailing: widget.agenteLogado.podeExcluir
+                        ? IconButton(
+                            icon: const Icon(Icons.delete_outline),
+                            tooltip: 'Excluir',
+                            onPressed: () => _excluir(estabelecimento),
+                          )
+                        : null,
                   ),
                 );
               },

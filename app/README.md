@@ -89,6 +89,26 @@ Pra testar o login agora, crie um agente com CPF e senha pelo Swagger
 | `CHEFE` | Chefe de área — define o fiscal responsável |
 | `FISCAL` | Fiscal — executa as inspeções em campo |
 
+## Exclusão
+
+Só agentes com perfil `CHEFE` ou `ADMINISTRATIVO` veem botão de exclusão
+(`Agente.podeExcluir`, em `models/agente.dart`) — fiscais não têm essa
+opção na interface. O botão aparece em três telas, cada um com diálogo de
+confirmação (`widgets/confirmar_exclusao.dart`) antes de chamar a API:
+
+- **Ocorrências** (`screens/ocorrencias_screen.dart`) — só é possível
+  excluir ocorrências sem inspeção vinculada.
+- **Estabelecimentos** (`screens/estabelecimentos_screen.dart`) — só é
+  possível excluir estabelecimentos sem ocorrência vinculada.
+- **Evidências** (`screens/inspecao_detalhe_screen.dart`, no cartão de
+  cada evidência) — exige o id do agente autor da exclusão, que o backend
+  grava em log de auditoria antes de remover.
+
+Não existe `ON DELETE CASCADE` no esquema, então tentar excluir um
+registro com dependentes falha com erro do servidor (ainda sem tratamento
+específico para violação de chave estrangeira); o app mostra esse erro
+numa snackbar, sem travar a tela.
+
 ## Pré-requisitos
 
 Diferente do backend (`../backend/`), este app **não roda em container** —

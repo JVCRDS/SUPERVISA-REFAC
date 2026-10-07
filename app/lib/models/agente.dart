@@ -60,4 +60,8 @@ class Agente {
       criadoEm: DateTime.parse(json['criadoEm'] as String),
     );
   }
+
+  /// Chefe de área e administrativo podem excluir registros (estabelecimento,
+  /// ocorrência, evidência); fiscal, não.
+  bool get podeExcluir => perfil == Perfil.chefe || perfil == Perfil.administrativo;
 }
