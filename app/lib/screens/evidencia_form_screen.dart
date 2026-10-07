@@ -178,9 +178,15 @@ class _EvidenciaFormScreenState extends State<EvidenciaFormScreen> {
               final agentes = snapshot.data ?? const [];
               return DropdownButtonFormField<String>(
                 initialValue: _autorId,
+                isExpanded: true,
                 decoration: const InputDecoration(labelText: 'Agente'),
                 items: agentes
-                    .map((a) => DropdownMenuItem(value: a.id, child: Text(a.nome)))
+                    .map(
+                      (a) => DropdownMenuItem(
+                        value: a.id,
+                        child: Text(a.nome, overflow: TextOverflow.ellipsis),
+                      ),
+                    )
                     .toList(),
                 onChanged: (valor) => setState(() => _autorId = valor),
               );

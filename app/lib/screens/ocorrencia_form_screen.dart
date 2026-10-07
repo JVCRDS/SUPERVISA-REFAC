@@ -111,18 +111,30 @@ class _OcorrenciaFormScreenState extends State<OcorrenciaFormScreen> {
               children: [
                 DropdownButtonFormField<String>(
                   initialValue: _areaId,
+                  isExpanded: true,
                   decoration: const InputDecoration(labelText: 'Área'),
                   items: areas
-                      .map((area) => DropdownMenuItem(value: area.id, child: Text(area.nome)))
+                      .map(
+                        (area) => DropdownMenuItem(
+                          value: area.id,
+                          child: Text(area.nome, overflow: TextOverflow.ellipsis),
+                        ),
+                      )
                       .toList(),
                   onChanged: (valor) => setState(() => _areaId = valor),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   initialValue: _estabelecimentoId,
+                  isExpanded: true,
                   decoration: const InputDecoration(labelText: 'Estabelecimento'),
                   items: estabelecimentos
-                      .map((e) => DropdownMenuItem(value: e.id, child: Text(e.nome)))
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e.id,
+                          child: Text(e.nome, overflow: TextOverflow.ellipsis),
+                        ),
+                      )
                       .toList(),
                   onChanged: (valor) => setState(() => _estabelecimentoId = valor),
                 ),

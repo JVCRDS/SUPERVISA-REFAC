@@ -131,6 +131,7 @@ class _InspecaoFormScreenState extends State<InspecaoFormScreen> {
           const SizedBox(height: 8),
           DropdownButtonFormField<SituacaoInspecao>(
             initialValue: _situacao,
+            isExpanded: true,
             decoration: const InputDecoration(labelText: 'Situação'),
             items: SituacaoInspecao.values
                 .map((s) => DropdownMenuItem(value: s, child: Text(s.rotulo)))
