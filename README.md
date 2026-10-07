@@ -163,14 +163,18 @@ http://localhost:8080/swagger-ui/index.html
 
 Ocorrência exige um `areaId` e um `estabelecimentoId` que já existam —
 `área` é um cadastro de referência (só `GET`, sem endpoint de criação), e
-a migration `V3__seed_areas.sql` já semeia três áreas padrão num banco
-novo, pra não travar nesse ponto:
+as migrations `V3__seed_areas.sql` e `V5__areas_reais_visa.sql` já semeiam
+os seis setores reais da Gerência de Vigilância Sanitária de Ribeirão
+Preto num banco novo, pra não travar nesse ponto:
 
 | Área | id |
 | --- | --- |
-| Alimentos | `11111111-1111-1111-1111-111111111111` |
-| Água | `22222222-2222-2222-2222-222222222222` |
-| Saúde | `33333333-3333-3333-3333-333333333333` |
+| Alimentos e Serviços de Alimentação | `11111111-1111-1111-1111-111111111111` |
+| Medicamentos, Farmácias e Produtos de Interesse à Saúde | `22222222-2222-2222-2222-222222222222` |
+| Serviços de Saúde e Assistência Médica | `33333333-3333-3333-3333-333333333333` |
+| Instituições de Longa Permanência e Assistência Social | `44444444-4444-4444-4444-444444444444` |
+| Interesse à Saúde e Estética | `55555555-5555-5555-5555-555555555555` |
+| Seções e Equipes Distritais | `66666666-6666-6666-6666-666666666666` |
 
 Passo a passo no Swagger:
 

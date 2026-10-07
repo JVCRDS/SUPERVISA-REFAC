@@ -113,19 +113,7 @@ class _OcorrenciaFormScreenState extends State<OcorrenciaFormScreen> {
                   initialValue: _areaId,
                   decoration: const InputDecoration(labelText: 'Área'),
                   items: areas
-                      .map(
-                        (area) => DropdownMenuItem(
-                          value: area.id,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset(_iconeDaArea(area.nome), width: 20, height: 20),
-                              const SizedBox(width: 8),
-                              Text(area.nome),
-                            ],
-                          ),
-                        ),
-                      )
+                      .map((area) => DropdownMenuItem(value: area.id, child: Text(area.nome)))
                       .toList(),
                   onChanged: (valor) => setState(() => _areaId = valor),
                 ),
@@ -168,19 +156,4 @@ class _OcorrenciaFormScreenState extends State<OcorrenciaFormScreen> {
       ),
     );
   }
-}
-
-/// Escolhe o ícone da área pelo nome. Cobre as áreas semeadas por padrão
-/// (`V3__seed_areas.sql`) e cai num ícone genérico pra qualquer outra.
-String _iconeDaArea(String nome) {
-  final nomeNormalizado = nome.toLowerCase();
-  if (nomeNormalizado.contains('aliment')) return 'assets/icons/icon_alimentos.png';
-  if (nomeNormalizado.contains('água') || nomeNormalizado.contains('agua')) {
-    return 'assets/icons/icon_agua.png';
-  }
-  if (nomeNormalizado.contains('praga')) return 'assets/icons/icon_pragas.png';
-  if (nomeNormalizado.contains('saúde') || nomeNormalizado.contains('saude')) {
-    return 'assets/icons/marca.png';
-  }
-  return 'assets/icons/marca.png';
 }
